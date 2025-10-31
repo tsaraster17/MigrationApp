@@ -1,8 +1,12 @@
 import pandas as pd
 import os
+from pathlib import Path
 
-input_file = r"C:\Users\Tsar Aster17\PycharmProjects\MigrationPredictor\cleaned\employment_clean.csv"
-clean_folder = r"C:\Users\Tsar Aster17\PycharmProjects\MigrationPredictor\cleaned"
+# Portable paths: prefer env override, else repo cleaned/ or user's Downloads
+BASE_DIR = Path(__file__).resolve().parent
+DEFAULT_CLEANED = BASE_DIR / "cleaned"
+clean_folder = Path(os.environ.get('CLEANED_DIR', DEFAULT_CLEANED))
+input_file = Path(os.environ.get('INPUT_FILE', clean_folder / 'employment_clean.csv'))
 
 print("Loading employment_clean.csv...")
 df = pd.read_csv(input_file)
@@ -31,7 +35,8 @@ for out_name, col in mapping.items():
     sub['value'] = pd.to_numeric(sub['value'], errors='coerce')
     sub = sub.dropna(subset=['value'])
 
-    out_file = os.path.join(clean_folder, out_name)
+    out_file = Path(clean_folder) / out_name
+    out_file.parent.mkdir(parents=True, exist_ok=True)
     sub.to_csv(out_file, index=False)
     print(f"✅ Saved {out_file} — rows: {len(sub)}")
 

@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 import pickle
+from pathlib import Path
 
 from sklearn.ensemble import RandomForestRegressor, HistGradientBoostingRegressor
 from xgboost import XGBRegressor
@@ -13,12 +14,17 @@ from dash import dcc, html, Input, Output, State
 import plotly.graph_objects as go
 
 # --------------------
-# Paths
+# Paths (portable)
 # --------------------
-BILAT_CSV = "C:/Users/Tsar Aster17/Downloads/bilat_mig.csv"
-COUNTRIES_CSV = "C:/Users/Tsar Aster17/Downloads/countries.csv"
-MODEL_FILE = "migration_models.pkl"
-PREDICTIONS_FILE = "migration_predictions.pkl"
+# Base directory (package folder)
+BASE_DIR = Path(__file__).resolve().parent
+# Allow overrides via environment variables; otherwise prefer user's Downloads then repository files
+DOWNLOADS = Path.home() / "Downloads"
+BILAT_CSV = Path(os.environ.get("BILAT_FILE", DOWNLOADS / "bilat_mig.csv"))
+COUNTRIES_CSV = Path(os.environ.get("COUNTRIES_FILE", DOWNLOADS / "countries.csv"))
+# Local artifact files (kept in working directory)
+MODEL_FILE = Path(os.environ.get("MODEL_FILE", BASE_DIR / "migration_models.pkl"))
+PREDICTIONS_FILE = Path(os.environ.get("PREDICTIONS_FILE", BASE_DIR / "migration_predictions.pkl"))
 
 # --------------------
 # Load country coordinates

@@ -36,19 +36,21 @@ from dash import Dash, dcc, html, Input, Output, State
 import plotly.graph_objects as go
 
 # -------------------------
-# USER PATHS - update if needed
+# USER PATHS - portable defaults (can be overridden with env vars)
 # -------------------------
-BILAT_FILE = r"C:\Users\Tsar Aster17\Downloads\bilat_mig.csv"
-COUNTRIES_FILE = r"C:\Users\Tsar Aster17\Downloads\countries.csv"
+BASE_DIR = Path(__file__).resolve().parent
+DOWNLOADS = Path.home() / "Downloads"
+BILAT_FILE = Path(os.environ.get('BILAT_FILE', DOWNLOADS / 'bilat_mig.csv'))
+COUNTRIES_FILE = Path(os.environ.get('COUNTRIES_FILE', DOWNLOADS / 'countries.csv'))
 
 # Optional cleaned macro CSVs (provide cleaned World Bank or OWID style files)
-CLEANED_DIR = r"C:\Users\Tsar Aster17\PycharmProjects\MigrationPredictor\cleaned"
-CLEAN_GDP = os.path.join(CLEANED_DIR, "gdp_clean.csv")
-CLEAN_GDP_PC = os.path.join(CLEANED_DIR, "gdp_percap_clean.csv")
-CLEAN_POP = os.path.join(CLEANED_DIR, "population_clean.csv")
-CLEAN_EDU = os.path.join(CLEANED_DIR, "education_clean.csv")
-CLEAN_UNEMP = os.path.join(CLEANED_DIR, "unemployment_clean.csv")
-CLEAN_EMP_SECTOR = os.path.join(CLEANED_DIR, "employment_clean.csv")
+CLEANED_DIR = Path(os.environ.get('CLEANED_DIR', BASE_DIR / 'cleaned'))
+CLEAN_GDP = CLEANED_DIR / "gdp_clean.csv"
+CLEAN_GDP_PC = CLEANED_DIR / "gdp_percap_clean.csv"
+CLEAN_POP = CLEANED_DIR / "population_clean.csv"
+CLEAN_EDU = CLEANED_DIR / "education_clean.csv"
+CLEAN_UNEMP = CLEANED_DIR / "unemployment_clean.csv"
+CLEAN_EMP_SECTOR = CLEANED_DIR / "employment_clean.csv"
 
 # Cache / artifacts
 CACHE_DIR = Path(".cache_migration")
