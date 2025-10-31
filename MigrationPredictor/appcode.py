@@ -131,8 +131,18 @@ def normalize_macro_df(df):
 # 1) Load base datasets
 # -------------------------
 safe_print("Loading countries/centroids...")
-if not os.path.exists(COUNTRIES_FILE):
-    raise FileNotFoundError(f"countries file missing at {COUNTRIES_FILE}")
+# Allow an environment-configured COUNTRIES_FILE, but fall back to the repo's cleaned/countries.csv
+if not COUNTRIES_FILE.exists():
+    alt = CLEANED_DIR / 'countries.csv'
+    alt2 = BASE_DIR / 'cleaned' / 'countries.csv'
+    if alt.exists():
+        safe_print(f"COUNTRIES_FILE not found at {COUNRIES_FILE}, falling back to {alt}")
+        COUNTRIES_FILE = alt
+    elif alt2.exists():
+        safe_print(f"COUNTRIES_FILE not found at {COUNTRIES_FILE}, falling back to {alt2}")
+        COUNTRIES_FILE = alt2
+    else:
+        raise FileNotFoundError(f"countries file missing at {COUNTRIES_FILE} and no fallback found in {CLEANED_DIR} or {BASE_DIR / 'cleaned'}")
 centroids = pd.read_csv(COUNTRIES_FILE)
 safe_print("centroids columns:", list(centroids.columns))
 
