@@ -5,11 +5,34 @@ import numpy as np
 import streamlit as st
 import plotly.graph_objects as go
 
-# Portable path logic (env overrides -> Downloads -> repo cleaned)
+# Portable path logic (env overrides -> repo data folders -> Downloads)
 BASE_DIR = Path(__file__).resolve().parent
 DOWNLOADS = Path.home() / "Downloads"
-BILAT_FILE = Path(os.environ.get('BILAT_FILE', DOWNLOADS / 'bilat_mig.csv'))
-COUNTRIES_FILE = Path(os.environ.get('COUNTRIES_FILE', DOWNLOADS / 'countries.csv'))
+# Candidate repo locations to check for data files
+REPO_CLEANED = BASE_DIR / 'cleaned'
+REPO_WB = BASE_DIR / 'world_bank_data'
+
+def find_data_file(env_name: str, candidates: list[str]):
+    # 1) environment variable
+    val = os.environ.get(env_name)
+    if val:
+        p = Path(val)
+        if p.exists():
+            return p
+    # 2) repo cleaned/ and world_bank_data
+    for d in candidates:
+        p = Path(d)
+        if p.exists():
+            return p
+    # 3) Downloads fallback
+    return Path(os.environ.get(env_name, DOWNLOADS / candidates[0].name))
+
+# default candidate filenames (Path objects for name access)
+_bilat_candidates = [REPO_CLEANED / 'bilat_mig.csv', REPO_WB / 'bilat_mig.csv']
+_countries_candidates = [REPO_CLEANED / 'countries.csv', REPO_WB / 'countries.csv']
+
+BILAT_FILE = find_data_file('BILAT_FILE', _bilat_candidates)
+COUNTRIES_FILE = find_data_file('COUNTRIES_FILE', _countries_candidates)
 
 st.set_page_config(page_title="Migration Predictor (Streamlit)", layout="wide")
 
