@@ -1,0 +1,5 @@
+orig,dest,mig_rate,mig_count,year0
+United States,Canada,0.05,5000,2020
+United States,Mexico,0.10,12000,2020
+Canada,United Kingdom,0.02,800,2020
+United Kingdom,Australia,0.03,1200,2020
