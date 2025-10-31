@@ -161,8 +161,17 @@ safe_print(f"Mapped {len(country_coords)} countries with coords")
 
 # bilateral migration
 safe_print("Loading bilateral migration data...")
-if not os.path.exists(BILAT_FILE):
-    raise FileNotFoundError(f"bilat file missing at {BILAT_FILE}")
+if not BILAT_FILE.exists():
+    alt = CLEANED_DIR / 'bilat_mig.csv'
+    alt2 = BASE_DIR / 'cleaned' / 'bilat_mig.csv'
+    if alt.exists():
+        safe_print(f"BILAT_FILE not found at {BILAT_FILE}, falling back to {alt}")
+        BILAT_FILE = alt
+    elif alt2.exists():
+        safe_print(f"BILAT_FILE not found at {BILAT_FILE}, falling back to {alt2}")
+        BILAT_FILE = alt2
+    else:
+        raise FileNotFoundError(f"bilat file missing at {BILAT_FILE} and no fallback found in {CLEANED_DIR} or {BASE_DIR / 'cleaned'}")
 bilat = pd.read_csv(BILAT_FILE)
 safe_print("bilat columns:", list(bilat.columns))
 safe_print("bilat rows:", len(bilat))
